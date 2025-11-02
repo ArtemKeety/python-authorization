@@ -10,6 +10,11 @@ class Login(Base):
     password: str = Field(..., min_length=3, max_length=100)
 
 
+class DBUser(Login):
+    email: EmailStr
+    is_active: bool
+    role_id: int
+
 class Registration(Login):
     rep_password: str = Field(..., min_length=3, max_length=100 )
     email: EmailStr
