@@ -1,8 +1,13 @@
+import asyncio
+
 import uvicorn
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from db import check
 from logger import Logger
+from router import router
+from uvicorn.config import Config
+from uvicorn.server import Server
 
 @asynccontextmanager
 async def start_upp(app: FastAPI):
@@ -16,9 +21,14 @@ app = FastAPI(
     lifespan=start_upp,
 )
 
+app.include_router(router)
 
-
+async def main():
+    config = Config(app, host="0.0.0.0", port=8000)
+    server = Server(config)
+    await server.serve()
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    #uvicorn.run(app, host="0.0.0.0", port=8000)
+    asyncio.run(main())
