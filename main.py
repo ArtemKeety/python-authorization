@@ -3,7 +3,7 @@ import asyncio
 import uvicorn
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from db import check
+from db import check, initialize_database
 from logger import Logger
 from router import router
 from uvicorn.config import Config
@@ -14,6 +14,7 @@ async def start_upp(app: FastAPI):
     Logger.set_logger()
     Logger.set_lvl(Logger.Level.debug)
     await check()
+    await initialize_database()
     yield
 
 app = FastAPI(
