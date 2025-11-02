@@ -4,10 +4,9 @@ from utils import Token
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from functools import wraps
 from enum import Enum
+from shemas import Role
 
-class Role(Enum):
-    user = 1
-    admin = 2
+
 
 secure = HTTPBearer(auto_error=True)
 

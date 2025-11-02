@@ -1,10 +1,8 @@
-import os
 import jwt
 from passlib.hash import bcrypt
 from fastapi import HTTPException
+from config import ALGORITM, SECRET_KEY
 
-SECRET_KEY = '1234'#os.urandom(32)
-ALGORITM = 'HS256'
 
 class Singleton(type):
     _instance = {}
@@ -13,8 +11,6 @@ class Singleton(type):
         if not cls in cls._instance:
             cls._instance[cls] = super().__call__(*args, **kwargs)
         return cls._instance[cls]
-
-
 
 class Password:
 
@@ -25,7 +21,6 @@ class Password:
     @staticmethod
     def verify_password(password: str, hashed_password: str) -> bool:
         return bcrypt.verify(password, hashed_password)
-
 
 class Token:
 

@@ -3,6 +3,7 @@ from db import Database
 from shemas import Registration, DBUser
 from typing import Optional
 from config import DB_TIMEOUT
+from shemas import Role
 
 
 class Repo:
@@ -40,3 +41,24 @@ class Repo:
             timeout=DB_TIMEOUT,
         )
         return res
+
+
+    @staticmethod
+    @Database.get()
+    async def update_active(user_id: int, active: bool, conn: asyncpg.Connection) -> None:
+        await conn.execute(
+            "UPDATE users SET is_active = $1 WHERE id = $2",
+            active, user_id,
+            timeout=DB_TIMEOUT,
+        )
+
+
+    @staticmethod
+    @Database.get()
+    async def update_role(user_id: int, role: Role, conn: asyncpg.Connection):
+        await conn.execute(
+            "UPDATE users SET role_id = $1 WHERE id = $2",
+            role.value, user_id,
+            timeout=DB_TIMEOUT
+        )
+

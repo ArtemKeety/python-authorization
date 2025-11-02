@@ -1,8 +1,21 @@
 from pydantic import BaseModel, Field, EmailStr, model_validator
 from fastapi import HTTPException
+from enum import Enum, IntEnum
+
+class Role(IntEnum):
+    user = 1
+    admin = 2
+
+
+
 
 class Base(BaseModel):
     pass
+
+
+class UpdateRole(Base):
+    user_id: int = Field(ge=1)
+    role: Role
 
 
 class Login(Base):

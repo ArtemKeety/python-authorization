@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from shemas import Registration, Login, DBUser
+from shemas import Registration, Login, DBUser, UpdateRole, Role
 from repo import Repo
 from utils import Token
 from utils import Password
-from midleware import checkRole, Role, get_user_id
+from midleware import checkRole, get_user_id
 
 router = APIRouter()
 
@@ -39,6 +39,11 @@ async def sign_in(u: Login):
 async def logout():
     pass
 
+@router.delete("/delete")
+async def del_acc(user: DBUser = Depends(checkRole([Role.user]))):
+    await Repo.update_active(user.id, False)
+    return {"message": "Account deleted"}
+
 @router.get("/comment")
 async def get_comment():
     return COMMENTS
@@ -46,7 +51,15 @@ async def get_comment():
 @router.post("/comment")
 async def add_comment(text: str, user: DBUser = Depends(checkRole([Role.user, Role.admin]))):
     COMMENTS.append({"text": text, "author": user.login})
+    return {"message": "Comment added"}
 
-# @router.post("/moc")
-# async def moc(user_id = Depends(get_user_id)):
-#     pass
+@router.put("/role", dependencies=[Depends(checkRole([Role.admin]))])
+async def update_role(u: UpdateRole = Depends()):
+    await Repo.update_role(u.user_id, u.role)
+    return {"message": "Role updated"}
+
+
+
+
+
+
