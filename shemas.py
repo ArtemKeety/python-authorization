@@ -14,6 +14,7 @@ class DBUser(Login):
     email: EmailStr
     is_active: bool
     role_id: int
+    id: int
 
 class Registration(Login):
     rep_password: str = Field(..., min_length=3, max_length=100 )
@@ -24,3 +25,4 @@ class Registration(Login):
         if self.rep_password != self.password:
             raise HTTPException(detail='Passwords do not match', status_code=400)
         return self
+
