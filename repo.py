@@ -11,8 +11,20 @@ class Repo:
     @Database.get()
     async def get_user(login:str, email:str, conn: asyncpg.Connection) -> Optional[DBUser]:
         if data := await conn.fetchrow(
-                "SELECT * FROM users WHERE email = $1 or login =$2",
+                "SELECT * FROM users WHERE (email = $1 or login =$2) and is_active = true",
                 email, login,
+                timeout=DB_TIMEOUT,
+        ):
+            return DBUser(**data)
+        return None
+
+
+    @staticmethod
+    @Database.get()
+    async def get_user_by_id(user_id: int, conn: asyncpg.Connection) -> Optional[DBUser]:
+        if data := await conn.fetchrow(
+                "SELECT * FROM users WHERE (id = $1) and is_active = true",
+                user_id,
                 timeout=DB_TIMEOUT,
         ):
             return DBUser(**data)

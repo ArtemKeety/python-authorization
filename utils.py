@@ -1,8 +1,9 @@
 import os
 import jwt
 from passlib.hash import bcrypt
+from fastapi import HTTPException
 
-SECRET_KEY = os.urandom(32)
+SECRET_KEY = '1234'#os.urandom(32)
 ALGORITM = 'HS256'
 
 class Singleton(type):
@@ -29,8 +30,16 @@ class Password:
 class Token:
 
     @staticmethod
-    def decode_token(token: str) -> dict:
-        pass
+    def decode_token(token: str) -> int:
+        try:
+            tmp = jwt.decode(token, SECRET_KEY, algorithms=ALGORITM)
+            return tmp['id']
+        except jwt.ExpiredSignatureError:
+            raise HTTPException(detail='Token expired', status_code=401)
+        except jwt.InvalidTokenError:
+            raise HTTPException(detail='Token expired', status_code=401)
+
+
 
     @staticmethod
     def encode_token(user_id: int) -> str:

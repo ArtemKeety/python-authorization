@@ -1,9 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
-from shemas import Registration, Login
+
+from shemas import Registration, Login, DBUser
 from repo import Repo
 from utils import Token
 from utils import Password
+from midleware import checkRole, Role, get_user_id
+
 router = APIRouter()
+
+COMMENTS = [
+    {"text": "first comment", "author": "admin"},
+]
 
 
 @router.post("/sign-up")
@@ -27,3 +34,19 @@ async def sign_in(u: Login):
 
     token = Token.encode_token(db_user.id)
     return {"token": token}
+
+@router.post("/logout")
+async def logout():
+    pass
+
+@router.get("/comment")
+async def get_comment():
+    return COMMENTS
+
+@router.post("/comment")
+async def add_comment(text: str, user: DBUser = Depends(checkRole([Role.user, Role.admin]))):
+    COMMENTS.append({"text": text, "author": user.login})
+
+# @router.post("/moc")
+# async def moc(user_id = Depends(get_user_id)):
+#     pass
