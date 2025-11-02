@@ -9,7 +9,7 @@ class Repo:
 
     @staticmethod
     @Database.get()
-    async def check_user(r: Registration, conn: asyncpg.Connection) -> Optional[DBUser]:
+    async def get_user(r: Registration, conn: asyncpg.Connection) -> Optional[DBUser]:
         if data := await conn.fetchrow("SELECT * FROM users WHERE email = $1 or login =$2", r.email, r.login):
             return DBUser(**data)
         return None
