@@ -2,6 +2,7 @@ import asyncpg
 from db import Database
 from shemas import Registration, DBUser
 from typing import Optional
+from config import DB_TIMEOUT
 
 
 class Repo:
@@ -9,7 +10,11 @@ class Repo:
     @staticmethod
     @Database.get()
     async def get_user(login:str, email:str, conn: asyncpg.Connection) -> Optional[DBUser]:
-        if data := await conn.fetchrow("SELECT * FROM users WHERE email = $1 or login =$2", email, login):
+        if data := await conn.fetchrow(
+                "SELECT * FROM users WHERE email = $1 or login =$2",
+                email, login,
+                timeout=DB_TIMEOUT,
+        ):
             return DBUser(**data)
         return None
 
@@ -20,6 +25,6 @@ class Repo:
         res = await conn.fetchval(
             "INSERT INTO users (email, login, password) VALUES ($1, $2, $3) RETURNING id",
             r.email, r.login, r.password,
-            timeout=10,
+            timeout=DB_TIMEOUT,
         )
         return res
