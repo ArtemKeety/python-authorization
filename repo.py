@@ -16,9 +16,11 @@ class Repo:
 
     @staticmethod
     @Database.get()
-    async def add_user(r: Registration, conn: asyncpg.Connection):
+    async def add_user(r: Registration, conn: asyncpg.Connection) -> int:
         password = Password.hash_password(r.password)
-        await conn.execute(
-            "INSERT INTO users (email, login, password) VALUES ($1, $2, $3)",
-            r.email, r.login, password
+        res = await conn.fetchval(
+            "INSERT INTO users (email, login, password) VALUES ($1, $2, $3) RETURNING id",
+            r.email, r.login, password,
+            timeout=10,
         )
+        return res

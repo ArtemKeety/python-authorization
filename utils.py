@@ -1,7 +1,9 @@
+import os
 import jwt
 from passlib.hash import bcrypt
 
-
+SECRET_KEY = os.urandom(32)
+ALGORITM = 'HS256'
 
 class Singleton(type):
     _instance = {}
@@ -22,3 +24,15 @@ class Password:
     @staticmethod
     def verify_password(password: str, hashed_password: str) -> bool:
         return bcrypt.verify(password, hashed_password)
+
+
+class Token:
+
+    @staticmethod
+    def decode_token(token: str) -> dict:
+        pass
+
+    @staticmethod
+    def encode_token(user_id: int) -> str:
+        d = {'id': user_id}
+        return jwt.encode(d, SECRET_KEY, algorithm=ALGORITM)
